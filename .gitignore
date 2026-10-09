@@ -2,3 +2,9 @@
 __pycache__/
 *.pyc
 .env
+
+# runtime output
+*.db
+*.flag
+processed.log
+tracked_done.log

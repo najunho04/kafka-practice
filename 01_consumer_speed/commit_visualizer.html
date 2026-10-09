@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연속 구간 commit 시각화</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --ink: #1d1d1b; --muted: #6b6b66; --line: #dcdcd6;
+    --done: #2f9e6b; --done-bg: #dff3e8;
+    --ahead: #2b6fd6; --ahead-bg: #dce8fb;
+    --run: #c77a00; --run-bg: #fdeccb;
+    --wait: #8a8a84; --wait-bg: #ececE8;
+    --bad: #c93636; --bad-bg: #fbe0e0; --accent: #5b3fd1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151514; --card: #1f1f1d; --ink: #ecece8; --muted: #a2a29b; --line: #373733;
+      --done: #4cc58c; --done-bg: #173a2a;
+      --ahead: #6aa3ff; --ahead-bg: #172a4d;
+      --run: #f0a935; --run-bg: #47340f;
+      --wait: #9a9a93; --wait-bg: #2a2a27;
+      --bad: #ff7b7b; --bad-bg: #4a1f1f; --accent: #9d86ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.55 -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; }
+  main { max-width: 920px; margin: 0 auto; padding: 24px 16px 56px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { color: var(--muted); margin: 0 0 18px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+            padding: 16px; margin-bottom: 14px; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button { font: inherit; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line);
+           background: var(--card); color: var(--ink); cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  input[type=range] { flex: 1; min-width: 160px; accent-color: var(--accent); }
+  .tick { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 72px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .legend span::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px;
+                         margin-right: 6px; vertical-align: -1px; border: 1.5px solid; }
+  .legend .l-done::before { background: var(--done-bg); border-color: var(--done); }
+  .legend .l-ahead::before { background: var(--ahead-bg); border-color: var(--ahead); }
+  .legend .l-run::before { background: var(--run-bg); border-color: var(--run); }
+  .legend .l-wait::before { background: var(--wait-bg); border-color: var(--wait); }
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 22px; }
+  .cell { width: 62px; padding: 6px 0 5px; text-align: center; border-radius: 8px; border: 1.5px solid;
+          position: relative; font-variant-numeric: tabular-nums; }
+  .cell .off { font-weight: 700; font-size: 15px; }
+  .cell .meta { font-size: 12px; opacity: .85; }
+  .cell.done  { background: var(--done-bg);  border-color: var(--done);  color: var(--done); }
+  .cell.ahead { background: var(--ahead-bg); border-color: var(--ahead); color: var(--ahead); }
+  .cell.run   { background: var(--run-bg);   border-color: var(--run);   color: var(--run); }
+  .cell.wait  { background: var(--wait-bg);  border-color: var(--wait);  color: var(--wait); }
+  .cell.mark::before { content: "commit 위치 ▼"; position: absolute; top: -20px; left: 50%;
+                       transform: translateX(-50%); font-size: 11px; white-space: nowrap;
+                       color: var(--accent); font-weight: 700; }
+  .cell.mark { box-shadow: -4px 0 0 -1px var(--accent); }
+  .lanes { display: grid; gap: 6px; }
+  .lane { display: flex; align-items: center; gap: 10px; }
+  .lane .name { width: 74px; color: var(--muted); font-size: 13px; }
+  .lane .job { flex: 1; padding: 5px 10px; border-radius: 8px; border: 1px dashed var(--line);
+               font-size: 13px; color: var(--muted); }
+  .lane .job.busy { border: 1.5px solid var(--run); background: var(--run-bg); color: var(--run); font-weight: 600; }
+  .record { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 13px;
+            background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
+  .record b { color: var(--accent); }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .opt { border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; }
+  .opt h3 { margin: 0 0 6px; font-size: 14px; }
+  .opt .sub { font-size: 12.5px; color: var(--muted); min-height: 38px; }
+  .opt .res { margin-top: 8px; font-weight: 700; font-size: 14px; }
+  .opt.bad { border-color: var(--bad); background: var(--bad-bg); }
+  .opt.ok { border-color: var(--done); background: var(--done-bg); }
+  .opt.mid { border-color: var(--ahead); background: var(--ahead-bg); }
+  .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>연속 구간 commit과 commit 메타데이터</h1>
+  <p class="lead">파티션 0의 offset 40~51을 key A·B·C가 병렬로 처리합니다. 같은 key는 한 번에 1건씩만 실행되고(KEY 순서), 끝나는 순서는 offset 순서와 다릅니다.
+  슬라이더를 움직이거나 ▶ 재생을 눌러 시간(tick)을 흘려 보세요.</p>
+
+  <section>
+    <div class="controls">
+      <button id="play" class="primary">▶ 재생</button>
+      <button id="reset">처음으로</button>
+      <input id="slider" type="range" min="0" max="12" value="0">
+      <span class="tick" id="tickLabel">tick 0 / 12</span>
+    </div>
+    <div class="legend">
+      <span class="l-done">완료 + commit됨</span>
+      <span class="l-ahead">완료했지만 commit 못 함 (앞에 안 끝난 건이 있음)</span>
+      <span class="l-run">처리 중</span>
+      <span class="l-wait">대기 중</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>① 파티션 0의 레코드 (숫자 = offset, 글자 = key)</h2>
+    <div class="strip" id="strip"></div>
+    <p class="note">commit 위치 = "빈틈 없이 끝난 구간의 끝+1". 앞에 안 끝난 offset이 하나라도 있으면 그 뒤가 끝났어도 거기서 멈춥니다.</p>
+  </section>
+
+  <section>
+    <h2>② 워커 (key마다 동시에 1건)</h2>
+    <div class="lanes" id="lanes"></div>
+  </section>
+
+  <section>
+    <h2>③ 브로커의 <code>__consumer_offsets</code> 에 저장되는 commit 기록</h2>
+    <div class="record" id="record"></div>
+    <p class="note"><code>metadata</code> 칸은 선택 사항입니다. Parallel Consumer 같은 라이브러리는 여기에 "연속 구간 뒤에 먼저 끝난 offset"을 압축해서 넣습니다. (우리 구현은 offset 숫자만 commit)</p>
+  </section>
+
+  <section>
+    <h2>④ 지금 이 순간 크래시가 나면? (commit/close 없이 강제 종료 → 재시작)</h2>
+    <div class="grid3" id="crash"></div>
+    <p class="note">* metadata에는 크기 한도가 있고(기본 4096바이트) commit 시점과 어긋날 수도 있어서, 중복을 줄이는 최선의 장치일 뿐 0을 보장하지는 않습니다. 그래서 멱등 컨슈머는 여전히 필요합니다.</p>
+  </section>
+</main>
+
+<script>
+  // 레코드: offset, key, 처리 시간(tick). 같은 key는 순차 실행.
+  const DUR = { A: 3, B: 1, C: 2 };
+  const KEYS = ["A","B","C","A","B","C","A","B","C","A","B","C"];
+  const BASE = 40;
+  const recs = KEYS.map((k, i) => ({ off: BASE + i, key: k, dur: DUR[k] }));
+  const laneEnd = { A: 0, B: 0, C: 0 };
+  recs.forEach(r => { r.start = laneEnd[r.key]; r.end = r.start + r.dur; laneEnd[r.key] = r.end; });
+  const MAX = Math.max(...recs.map(r => r.end));
+
+  const $ = id => document.getElementById(id);
+  $("slider").max = MAX;
+
+  const isDone = (r, t) => r.end <= t;
+  const isRun = (r, t) => r.start <= t && t < r.end;
+
+  function ranges(list) {
+    if (!list.length) return "(없음)";
+    const out = []; let s = list[0], p = list[0];
+    for (let i = 1; i <= list.length; i++) {
+      if (list[i] === p + 1) { p = list[i]; continue; }
+      out.push(s === p ? `${s}` : `${s}~${p}`);
+      s = p = list[i];
+    }
+    return out.join(", ");
+  }
+
+  function render(t) {
+    $("tickLabel").textContent = `tick ${t} / ${MAX}`;
+    // 연속 구간 끝+1
+    let w = BASE;
+    while (w < BASE + recs.length && isDone(recs[w - BASE], t)) w++;
+    const ahead = recs.filter(r => r.off > w && isDone(r, t)).map(r => r.off);
+
+    // ① 레코드 띠
+    $("strip").innerHTML = recs.map(r => {
+      let cls, sym;
+      if (isDone(r, t)) { cls = r.off < w ? "done" : "ahead"; sym = "✓"; }
+      else if (isRun(r, t)) { cls = "run"; sym = "⏳"; }
+      else { cls = "wait"; sym = "·"; }
+      const mark = r.off === w ? " mark" : "";
+      return `<div class="cell ${cls}${mark}"><div class="off">${r.off}</div><div class="meta">${r.key} ${sym}</div></div>`;
+    }).join("") + (w === BASE + recs.length
+      ? `<div class="cell mark" style="border-style:dashed;color:var(--accent)"><div class="off">52</div><div class="meta">끝</div></div>` : "");
+
+    // ② 워커
+    $("lanes").innerHTML = ["A","B","C"].map(k => {
+      const cur = recs.find(r => r.key === k && isRun(r, t));
+      const doneN = recs.filter(r => r.key === k && isDone(r, t)).length;
+      const total = recs.filter(r => r.key === k).length;
+      const txt = cur ? `offset ${cur.off} 처리 중 (${t - cur.start + 1}/${cur.dur})` : (doneN === total ? "모두 완료" : "대기");
+      return `<div class="lane"><div class="name">key ${k}</div><div class="job ${cur ? "busy" : ""}">${txt}</div></div>`;
+    }).join("");
+
+    // ③ commit 기록
+    const meta = ahead.length ? `"${ranges(ahead)} 완료"` : `""  (비어 있음)`;
+    $("record").innerHTML =
+      `key   : (<b>group</b>, <b>orders</b>, <b>partition 0</b>)<br>` +
+      `value : offset = <b>${w}</b>    ← 연속 구간 끝+1 ("${w} 앞은 전부 처리됨")<br>` +
+      `        metadata = ${meta}`;
+
+    // ④ 크래시 비교
+    const total = recs.length;
+    const doneAll = recs.filter(r => isDone(r, t)).length;
+    const unfinished = total - doneAll;
+    const dupNoMeta = ahead.length;   // w 이후인데 이미 끝난 건 = 다시 처리됨(중복)
+    const redo = recs.filter(r => r.off >= w && !isDone(r, t)).length;
+    $("crash").innerHTML = `
+      <div class="opt ${unfinished ? "bad" : "ok"}">
+        <h3>A. 받자마자 commit</h3>
+        <div class="sub">받은 위치(offset ${BASE + total})까지 이미 commit됨 → 재시작하면 52부터 읽음</div>
+        <div class="res">유실 ${unfinished}건 · 중복 0건</div>
+      </div>
+      <div class="opt ${dupNoMeta ? "mid" : "ok"}">
+        <h3>B. 연속 구간 commit (offset만)</h3>
+        <div class="sub">offset ${w}부터 다시 읽음. 이미 끝난 ${dupNoMeta}건도 다시 처리</div>
+        <div class="res">유실 0건 · 중복 ${dupNoMeta}건</div>
+      </div>
+      <div class="opt ok">
+        <h3>C. 연속 구간 + metadata</h3>
+        <div class="sub">offset ${w}부터 읽되 metadata의 완료 목록(${ranges(ahead)})은 건너뜀. 처리 중이던 ${redo}건만 다시 실행</div>
+        <div class="res">유실 0건 · 중복 0건*</div>
+      </div>`;
+  }
+
+  const slider = $("slider");
+  slider.addEventListener("input", () => render(+slider.value));
+  let timer = null;
+  function stop() { clearInterval(timer); timer = null; $("play").textContent = "▶ 재생"; }
+  $("play").addEventListener("click", () => {
+    if (timer) return stop();
+    if (+slider.value >= MAX) slider.value = 0;
+    $("play").textContent = "⏸ 일시정지";
+    timer = setInterval(() => {
+      slider.value = +slider.value + 1; render(+slider.value);
+      if (+slider.value >= MAX) stop();
+    }, 900);
+    render(+slider.value);
+  });
+  $("reset").addEventListener("click", () => { stop(); slider.value = 0; render(0); });
+  render(0);
+</script>
+</body>
+</html>
