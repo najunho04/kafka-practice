@@ -1,0 +1,37 @@
+#04 저장 2000건 | 순서역전 285건 (파티션 [0], offset 1115~1399) | 거절/오류 로그 2줄
+
+[관련 로그]
+1791523866.038 FASTQUERY [rdkafka#producer-15] [thrd:app]: Starting fast leader query
+1791523866.038 METADATA [rdkafka#producer-15] [thrd:main]: Skipping metadata refresh of 1 topic(s): partition leader query: no usable brokers
+1791523866.040 METADATA [rdkafka#producer-15] [thrd:main]: Error in metadata reply for topic orders-proof (PartCnt 0): Broker: Unknown topic or partition
+1791523866.139 METADATA [rdkafka#producer-15] [thrd:main]: Requesting metadata for 1/1 topics: partition leader query
+1791523866.139 METADATA [rdkafka#producer-15] [thrd:main]: localhost:9092/1: Request metadata for 1 topic(s): partition leader query
+1791523866.140 METADATA [rdkafka#producer-15] [thrd:main]: localhost:9092/1: ===== Received metadata (for 1 requested topics): partition leader query =====
+1791523866.140 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523866.140 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [0]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523866.140 LEADER [rdkafka#producer-15] [thrd:main]: orders-proof [0]: applying leader-id update -1 -> 1 (epoch 0)
+1791523866.140 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523866.140 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [1]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523866.140 LEADER [rdkafka#producer-15] [thrd:main]: orders-proof [1]: applying leader-id update -1 -> 1 (epoch 0)
+1791523866.140 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523866.140 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [2]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523866.140 LEADER [rdkafka#producer-15] [thrd:main]: orders-proof [2]: applying leader-id update -1 -> 1 (epoch 0)
+1791523866.141 MSGSET [rdkafka#producer-15] [thrd:localhost:9092/1]: localhost:9092/1: orders-proof [0]: MessageSet with 285 message(s) (MsgId 0, BaseSeq -1) encountered error: Broker: Not leader for partition (actions Refresh,MsgNotPersisted)
+1791523866.141 METADATAUPDATE [rdkafka#producer-15] [thrd:main]: Partition orders-proof(2+RnVStuRSOxWfPv/1C8Gw)[0]: updated with leader 1 and epoch 0
+1791523866.141 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523866.141 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523866.141 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523866.141 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523866.141 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523866.141 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523866.141 BROKERUA [rdkafka#producer-15] [thrd:localhost:9092/1]: orders-proof [0]: broker unavailable: produce: Broker: Not leader for partition
+1791523866.141 FASTQUERY [rdkafka#producer-15] [thrd:localhost:9092/1]: Starting fast leader query
+1791523866.141 METADATA [rdkafka#producer-15] [thrd:main]: Requesting metadata for 1/1 topics: partition leader query
+1791523866.141 METADATA [rdkafka#producer-15] [thrd:main]: localhost:9092/1: Request metadata for 1 topic(s): partition leader query
+1791523866.194 METADATA [rdkafka#producer-15] [thrd:main]: localhost:9092/1: ===== Received metadata (for 1 requested topics): partition leader query =====
+1791523866.194 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523866.194 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523866.194 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523866.194 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523866.194 METADATA [rdkafka#producer-15] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523866.194 BROKER [rdkafka#producer-15] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0

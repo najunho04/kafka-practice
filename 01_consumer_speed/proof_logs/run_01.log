@@ -1,0 +1,50 @@
+#01 저장 2000건 | 순서역전   0건 (-) | 거절/오류 로그 8줄
+
+[관련 로그]
+1791523859.342 FASTQUERY [rdkafka#producer-3] [thrd:app]: Starting fast leader query
+1791523859.342 METADATA [rdkafka#producer-3] [thrd:main]: Skipping metadata refresh of 1 topic(s): partition leader query: no usable brokers
+1791523859.349 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523859.349 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523859.349 LEADER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: applying leader-id update -1 -> 1 (epoch 0)
+1791523859.349 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523859.349 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523859.349 LEADER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: applying leader-id update -1 -> 1 (epoch 0)
+1791523859.349 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523859.349 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: leader -1 epoch -1 -> leader 1 epoch 0
+1791523859.349 LEADER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: applying leader-id update -1 -> 1 (epoch 0)
+1791523859.357 METADATAUPDATE [rdkafka#producer-3] [thrd:main]: Partition orders-proof(9PwEDay5RqCpasq/DwWh5w)[1]: updated with leader 1 and epoch 0
+1791523859.358 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523859.358 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.358 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523859.358 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.358 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523859.358 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.359 MSGSET [rdkafka#producer-3] [thrd:localhost:9092/1]: localhost:9092/1: orders-proof [1]: MessageSet with 47 message(s) (MsgId 0, BaseSeq -1) encountered error: Broker: Not leader for partition (actions Refresh,MsgNotPersisted)
+1791523859.359 BROKERUA [rdkafka#producer-3] [thrd:localhost:9092/1]: orders-proof [1]: broker unavailable: produce: Broker: Not leader for partition
+1791523859.370 MSGSET [rdkafka#producer-3] [thrd:localhost:9092/1]: localhost:9092/1: orders-proof [0]: MessageSet with 329 message(s) (MsgId 0, BaseSeq -1) encountered error: Broker: Not leader for partition (actions Refresh,MsgNotPersisted)
+1791523859.370 BROKERUA [rdkafka#producer-3] [thrd:localhost:9092/1]: orders-proof [0]: broker unavailable: produce: Broker: Not leader for partition
+1791523859.370 METADATAUPDATE [rdkafka#producer-3] [thrd:main]: Partition orders-proof(9PwEDay5RqCpasq/DwWh5w)[0]: updated with leader 1 and epoch 0
+1791523859.370 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523859.370 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.370 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523859.370 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.370 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523859.370 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.373 MSGSET [rdkafka#producer-3] [thrd:localhost:9092/1]: localhost:9092/1: orders-proof [0]: MessageSet with 188 message(s) (MsgId 0, BaseSeq -1) encountered error: Broker: Not leader for partition (actions Refresh,MsgNotPersisted)
+1791523859.373 BROKERUA [rdkafka#producer-3] [thrd:localhost:9092/1]: orders-proof [0]: broker unavailable: produce: Broker: Not leader for partition
+1791523859.373 METADATAUPDATE [rdkafka#producer-3] [thrd:main]: Partition orders-proof(9PwEDay5RqCpasq/DwWh5w)[0]: updated with leader 1 and epoch 0
+1791523859.373 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523859.373 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.373 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523859.373 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.374 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523859.374 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.376 MSGSET [rdkafka#producer-3] [thrd:localhost:9092/1]: localhost:9092/1: orders-proof [0]: MessageSet with 883 message(s) (MsgId 0, BaseSeq -1) encountered error: Broker: Not leader for partition (actions Refresh,MsgNotPersisted)
+1791523859.377 BROKERUA [rdkafka#producer-3] [thrd:localhost:9092/1]: orders-proof [0]: broker unavailable: produce: Broker: Not leader for partition
+1791523859.377 METADATAUPDATE [rdkafka#producer-3] [thrd:main]: Partition orders-proof(9PwEDay5RqCpasq/DwWh5w)[0]: updated with leader 1 and epoch 0
+1791523859.377 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [0] Leader 1 Epoch 0
+1791523859.377 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [0]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.377 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [1] Leader 1 Epoch 0
+1791523859.377 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [1]: leader 1 epoch 0 -> leader 1 epoch 0
+1791523859.377 METADATA [rdkafka#producer-3] [thrd:main]: Topic orders-proof [2] Leader 1 Epoch 0
+1791523859.377 BROKER [rdkafka#producer-3] [thrd:main]: orders-proof [2]: leader 1 epoch 0 -> leader 1 epoch 0
